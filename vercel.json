@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/app.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.11",
+        "maxLambdaSize": "15mb",
+        "includeFiles": "templates/**"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "api/app.py"
+    }
+  ],
+  "env": {
+    "VERCEL": "1",
+    "DATA_DIR": "/tmp/data"
+  }
+}
